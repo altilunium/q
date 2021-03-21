@@ -182,6 +182,7 @@ function(err, data) {
     var trans = data.data.translation.id
     place_detilayat.innerHTML = namasurat + " (" + nosurat +":" + noayat +")"
     place_trans.innerHTML = trans
+    document.documentElement.scrollTop = 0;
 
     console.log(data) 
   }
