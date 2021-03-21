@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Q</title>
+
+<style>
+
+
+/* arabic */
+@font-face {
+  font-family: 'Scheherazade';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(YA9Ur0yF4ETZN60keViq1kQQtZmptvY.woff2) format('woff2');
+  unicode-range: U+0600-06FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE80-FEFC;
+}
+/* latin */
+@font-face {
+  font-family: 'Scheherazade';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(YA9Ur0yF4ETZN60keViq1kQQsJmp.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+
+
+.txt {
+	font-family: 'Scheherazade', serif;
+	font-weight: normal;
+	padding: 0px 75px;
+}
+
+#arabic {
+
+	font-family: 'Scheherazade', serif;
+    font-weight: normal;
+    font-size: 42px;
+    padding: 0px 75px;
+}
+
+.txt2{
+    font-family: 'Scheherazade', serif;
+    font-weight: normal;
+    font-size: 31px;
+    padding: 0px 73px;
+    line-height: 29px;
+}
+
+
+</style>
+
+
+</head>
+<body>
+
+<h1 id="ayat-detail" class="txt"></h1>
+<h1 id="arabic"></h1>
+<p id="trans" class="txt2"></p>
+</body>
+<script>
+	
+var getJSON = function(url, callback) {
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', url, true);
+    xhr.responseType = 'json';
+    xhr.onload = function() {
+      var status = xhr.status;
+      if (status === 200) {
+        callback(null, xhr.response);
+      } else {
+        callback(status, xhr.response);
+      }
+    };
+    xhr.send();
+};
+
+6236
+
+function getRandomArbitrary(min, max) {
+    return Math.floor(Math.random() * (max - min) + min);
+}
+
+var noAyat = getRandomArbitrary(1,6237)
+var noAyat = 1470
+var url = "http://api.alquran.cloud/v1/ayah/" +noAyat +"/editions/quran-uthmani,en.asad"
+
+
+
+var local_url ="surah.json"
+
+var surahDB
+var nosurat
+var noayat
+var thisSurahAyat
+
+getJSON(local_url,function(err,data){
+	console.log(data)
+	surahDB = data
+	var random_surah = Math.floor(Math.random() * 113) 
+console.log("surahDB")
+console.log(surahDB)
+console.log("surahDB")
+thisSurahAyat = surahDB.data[random_surah].numberOfVerses
+var random_ayat = Math.floor(Math.random() * (thisSurahAyat-1))
+nosurat = random_surah + 1
+noayat = random_ayat + 1
+var url = "https://api.quran.sutanlab.id/surah/"+nosurat+"/"+noayat
+
+getJSON(url,
+function(err, data) {
+  if (err !== null) {
+    alert('Something went wrong: ' + err);
+  } else {
+    //alert('Your query count: ' + data.query.count);
+    console.log(data)
+    var arabic = document.getElementById("arabic")
+    var place_detilayat = document.getElementById("ayat-detail")
+    var place_trans = document.getElementById("trans")
+
+    arabic.innerHTML = data.data.text.arab
+    var namasurat = data.data.surah.name.transliteration.id
+    var trans = data.data.translation.id
+    place_detilayat.innerHTML = namasurat + " (" + nosurat +":" + noayat +")"
+    place_trans.innerHTML = trans
+
+    console.log(data)
+    
+    
+  }
+});
+
+
+})
+
+document.onclick = function(event){
+	console.log("click!")
+	noayat = noayat + 1
+	if ( (noayat - 1) == thisSurahAyat) {
+		nosurat = nosurat + 1
+		noayat = 1
+	}
+	var url = "https://api.quran.sutanlab.id/surah/"+nosurat+"/"+noayat
+	getJSON(url,
+function(err, data) {
+  if (err !== null) {
+    alert('Something went wrong: ' + err);
+  } else {
+    //alert('Your query count: ' + data.query.count);
+    console.log(data)
+    var arabic = document.getElementById("arabic")
+    var place_detilayat = document.getElementById("ayat-detail")
+    var place_trans = document.getElementById("trans")
+
+    arabic.innerHTML = data.data.text.arab
+    var namasurat = data.data.surah.name.transliteration.id
+    var trans = data.data.translation.id
+    place_detilayat.innerHTML = namasurat + " (" + nosurat +":" + noayat +")"
+    place_trans.innerHTML = trans
+
+    console.log(data)
+    
+    
+  }
+});
+
+
+}
+
+
+
+
+
+
+</script>
+</html>
