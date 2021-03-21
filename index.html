@@ -48,6 +48,27 @@
     font-size: 31px;
     padding: 0px 10px;
     line-height: 29px;
+    padding-bottom: 100px
+}
+
+#prev{
+  position: fixed;
+  bottom: 0px;
+  left: 0px;
+  width: 50%;
+  height: 35px;
+  background-color:lime;
+}
+
+
+
+#next{
+  position: fixed;
+  bottom: 0px;
+  right: 0px;
+  width: 50%;
+  height: 35px;
+  background-color:green;
 }
 
 
@@ -60,7 +81,10 @@
 <h1 id="ayat-detail" class="txt"></h1>
 <h1 id="arabic"></h1>
 <p id="trans" class="txt2"></p>
-<p>Click anywhere for next ayat</p>
+
+  <div id="prev" onclick="prevAyat()"></div>
+  <div id="next" onclick="nextAyat()"></div>
+
 </body>
 <script>
 	
@@ -91,7 +115,7 @@ var url = "http://api.alquran.cloud/v1/ayah/" +noAyat +"/editions/quran-uthmani,
 
 
 
-var local_url ="surah.json"
+var local_url ="dbsurat.json"
 
 var surahDB
 var nosurat
@@ -99,17 +123,21 @@ var noayat
 var thisSurahAyat
 
 getJSON(local_url,function(err,data){
+
+
 	console.log(data)
 	surahDB = data
-	var random_surah = Math.floor(Math.random() * 113) 
+	var random_surah = Math.floor(Math.random() * 113) + 1
 console.log("surahDB")
 console.log(surahDB)
 console.log("surahDB")
-thisSurahAyat = surahDB.data[random_surah].numberOfVerses
-var random_ayat = Math.floor(Math.random() * (thisSurahAyat-1))
-nosurat = random_surah + 1
-noayat = random_ayat + 1
-var url = "https://api.quran.sutanlab.id/surah/"+nosurat+"/"+noayat
+thisSurahAyat = surahDB[random_surah].jumlahayat
+var random_ayat = Math.floor(Math.random() * (thisSurahAyat - 1)) + 1
+var namasurat = surahDB[random_surah].nama
+nosurat = random_surah 
+noayat = random_ayat 
+var url = "db/"+nosurat+"-"+noayat+".json"
+//var url = "https://api.quran.sutanlab.id/surah/"+nosurat+"/"+noayat
 
 getJSON(url,
 function(err, data) {
@@ -122,9 +150,8 @@ function(err, data) {
     var place_detilayat = document.getElementById("ayat-detail")
     var place_trans = document.getElementById("trans")
 
-    arabic.innerHTML = data.data.text.arab
-    var namasurat = data.data.surah.name.transliteration.id
-    var trans = data.data.translation.id
+    arabic.innerHTML = data.arab
+    var trans = data.trans
     place_detilayat.innerHTML = namasurat + " (" + nosurat +":" + noayat +")"
     place_trans.innerHTML = trans
 
@@ -137,15 +164,9 @@ function(err, data) {
 
 })
 
-document.onclick = function(event){
-	console.log("click!")
-	noayat = noayat + 1
-	if ( noayat  > thisSurahAyat) {
-		nosurat = nosurat + 1
-		noayat = 1
-	}
-	var url = "https://api.quran.sutanlab.id/surah/"+nosurat+"/"+noayat
-	getJSON(url,
+
+function update() {
+  getJSON(url,
 function(err, data) {
   if (err !== null) {
     alert('Something went wrong: ' + err);
@@ -162,16 +183,45 @@ function(err, data) {
     place_detilayat.innerHTML = namasurat + " (" + nosurat +":" + noayat +")"
     place_trans.innerHTML = trans
 
-    console.log(data)
-    
-    
+    console.log(data) 
   }
 });
-
-
 }
 
 
+var url
+function nextAyat(){
+  noayat = noayat + 1
+  if ( noayat  > surahDB[nosurat].jumlahayat) {
+    nosurat = nosurat + 1
+    noayat = 1
+  }
+  url = "https://api.quran.sutanlab.id/surah/"+nosurat+"/"+noayat
+  update()
+}
+
+function prevAyat(){
+    noayat = noayat - 1
+  if ( noayat  == 0) {
+    nosurat = nosurat - 1
+    noayat = surahDB[nosurat].jumlahayat
+  }
+  url = "https://api.quran.sutanlab.id/surah/"+nosurat+"/"+noayat
+  update()
+}
+
+
+
+
+document.onkeydown =function(e){
+  console.log(e.keyCode)
+  if (e.keyCode == 39){
+    nextAyat()
+  }
+  else if (e.keyCode == 37){
+    prevAyat()
+  }
+}
 
 
 
