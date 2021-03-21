@@ -60,6 +60,7 @@
 <h1 id="ayat-detail" class="txt"></h1>
 <h1 id="arabic"></h1>
 <p id="trans" class="txt2"></p>
+<p>Click anywhere for next ayat</p>
 </body>
 <script>
 	
@@ -139,7 +140,7 @@ function(err, data) {
 document.onclick = function(event){
 	console.log("click!")
 	noayat = noayat + 1
-	if ( (noayat - 1) == thisSurahAyat) {
+	if ( noayat  > thisSurahAyat) {
 		nosurat = nosurat + 1
 		noayat = 1
 	}
