@@ -82,7 +82,7 @@
 </head>
 <body>
 
-<h1 id="ayat-detail" class="txt"></h1>
+<h1 id="ayat-detail" class="txt" onclick="jump()"></h1>
 <h1 id="arabic"></h1>
 <p id="trans" class="txt2"></p>
 
@@ -228,7 +228,21 @@ document.onkeydown =function(e){
   }
 }
 
+function jump(){
+	var a_jump = prompt("Jump");
+	a_jump = a_jump.split(" ")
+	jsur = a_jump[0]
+	jaya = a_jump[1]
 
+
+	if ((jaya <= surahDB[jsur].jumlahayat)&&(jsur <=  114)) {
+		nosurat = jsur
+		noayat = jaya
+		url = "https://api.quran.sutanlab.id/surah/"+nosurat+"/"+noayat
+		update()
+
+	}
+}
 
 
 </script>
