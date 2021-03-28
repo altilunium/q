@@ -122,8 +122,8 @@ var url = "http://api.alquran.cloud/v1/ayah/" +noAyat +"/editions/quran-uthmani,
 var local_url ="dbsurat.json"
 
 var surahDB
-var nosurat
-var noayat
+var nosurat = 1
+var noayat = 1
 var thisSurahAyat
 
 getJSON(local_url,function(err,data){
@@ -196,6 +196,7 @@ function(err, data) {
 
 var url
 function nextAyat(){
+  
   noayat = noayat + 1
   if ( noayat  > surahDB[nosurat].jumlahayat) {
     nosurat = nosurat + 1
@@ -236,8 +237,8 @@ function jump(){
 
 
 	if ((jaya <= surahDB[jsur].jumlahayat)&&(jsur <=  114)) {
-		nosurat = jsur
-		noayat = jaya
+		nosurat = parseInt(jsur)
+		noayat = parseInt(jaya)
 		url = "https://api.quran.sutanlab.id/surah/"+nosurat+"/"+noayat
 		update()
 
