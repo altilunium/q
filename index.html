@@ -181,9 +181,9 @@ function(err, data) {
     var place_detilayat = document.getElementById("ayat-detail")
     var place_trans = document.getElementById("trans")
 
-    arabic.innerHTML = data.data.text.arab
-    var namasurat = data.data.surah.name.transliteration.id
-    var trans = data.data.translation.id
+    arabic.innerHTML = data.arab
+    var namasurat = surahDB[nosurat].nama
+    var trans = data.trans
     place_detilayat.innerHTML = namasurat + " (" + nosurat +":" + noayat +")"
     place_trans.innerHTML = trans
     document.documentElement.scrollTop = 0;
@@ -202,7 +202,8 @@ function nextAyat(){
     nosurat = nosurat + 1
     noayat = 1
   }
-  url = "https://api.quran.sutanlab.id/surah/"+nosurat+"/"+noayat
+  url = "db/"+nosurat+"-"+noayat+".json"
+  //url = "https://api.quran.sutanlab.id/surah/"+nosurat+"/"+noayat
   update()
 }
 
@@ -212,7 +213,8 @@ function prevAyat(){
     nosurat = nosurat - 1
     noayat = surahDB[nosurat].jumlahayat
   }
-  url = "https://api.quran.sutanlab.id/surah/"+nosurat+"/"+noayat
+  url = "db/"+nosurat+"-"+noayat+".json"
+  //url = "https://api.quran.sutanlab.id/surah/"+nosurat+"/"+noayat
   update()
 }
 
@@ -239,7 +241,8 @@ function jump(){
 	if ((jaya <= surahDB[jsur].jumlahayat)&&(jsur <=  114)) {
 		nosurat = parseInt(jsur)
 		noayat = parseInt(jaya)
-		url = "https://api.quran.sutanlab.id/surah/"+nosurat+"/"+noayat
+		url = "db/"+nosurat+"-"+noayat+".json"
+    //url = "https://api.quran.sutanlab.id/surah/"+nosurat+"/"+noayat
 		update()
 
 	}
