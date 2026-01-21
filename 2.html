@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Q</title>
+
+<style>
+
+
+/* arabic */
+@font-face {
+  font-family: 'Scheherazade';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(YA9Ur0yF4ETZN60keViq1kQQtZmptvY.woff2) format('woff2');
+  unicode-range: U+0600-06FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE80-FEFC;
+}
+/* latin */
+@font-face {
+  font-family: 'Scheherazade';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(YA9Ur0yF4ETZN60keViq1kQQsJmp.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+
+
+.txt {
+	font-family: 'Scheherazade', serif;
+	font-weight: normal;
+	padding: 0px 10px;
+}
+
+#arabic {
+
+	font-family: 'Scheherazade', serif;
+    font-weight: normal;
+    font-size: 42px;
+    padding: 0px 10px;
+}
+
+.txt2{
+    font-family: 'Scheherazade', serif;
+    font-weight: normal;
+    font-size: 31px;
+    padding: 0px 10px;
+    line-height: 29px;
+    padding-bottom: 100px
+}
+
+#prev{
+  position: fixed;
+  bottom: 0px;
+  left: 0px;
+  width: 50%;
+  /*height: 35px;*/
+  background-color:lime;
+}
+
+
+
+#next{
+  position: fixed;
+  bottom: 0px;
+  right: 0px;
+  width: 50%;
+  /*height: 35px;*/
+  background-color:green;
+}
+
+.b {
+  text-align: center;
+  padding: 15px 0;
+}
+
+</style>
+
+
+</head>
+<body>
+
+<h1 id="ayat-detail" class="txt" onclick="jump()"></h1>
+<h1 id="arabic"></h1>
+<p id="trans" class="txt2"></p>
+
+  <div id="prev" class="b" onclick="prevAyat()">prev</div>
+  <div id="next" class="b" style="color:white" onclick="nextAyat()">next</div>
+
+</body>
+<script>
+	
+var getJSON = function(url, callback) {
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', url, true);
+    xhr.responseType = 'json';
+    xhr.onload = function() {
+      var status = xhr.status;
+      if (status === 200) {
+        callback(null, xhr.response);
+      } else {
+        callback(status, xhr.response);
+      }
+    };
+    xhr.send();
+};
+
+6236
+
+function getRandomArbitrary(min, max) {
+    return Math.floor(Math.random() * (max - min) + min);
+}
+
+var noAyat = getRandomArbitrary(1,6237)
+var noAyat = 1470
+var url = "http://api.alquran.cloud/v1/ayah/" +noAyat +"/editions/quran-uthmani,en.asad"
+
+
+
+var local_url ="dbsurat.json"
+
+var surahDB
+var nosurat = 1
+var noayat = 1
+var thisSurahAyat
+
+
+var juzRanges = [
+  null,
+  [1, 1, 148],
+  [2, 149, 259],
+  [3, 260, 385],
+  [4, 386, 516],
+  [5, 517, 640],
+  [6, 641, 750],
+  [7, 751, 899],
+  [8, 900, 1041],
+  [9, 1042, 1200],
+  [10, 1201, 1327],
+  [11, 1328, 1478],
+  [12, 1479, 1648],
+  [13, 1649, 1802],
+  [14, 1803, 2029],
+  [15, 2030, 2214],
+  [16, 2215, 2483],
+  [17, 2484, 2673],
+  [18, 2674, 2875],
+  [19, 2876, 3218],
+  [20, 3219, 3384],
+  [21, 3385, 3563],
+  [22, 3564, 3732],
+  [23, 3733, 4089],
+  [24, 4090, 4264],
+  [25, 4265, 4510],
+  [26, 4511, 4705],
+  [27, 4706, 5104],
+  [28, 5105, 5241],
+  [29, 5242, 5672],
+  [30, 5673, 6236]
+];
+
+
+
+getJSON(local_url,function(err,data){
+
+  surahDB = data;
+
+  var juz = prompt("Enter juz (1 - 30)");
+  juz = parseInt(juz);
+
+  if (isNaN(juz) || juz < 1 || juz > 30) {
+    alert("Invalid juz");
+    return;
+  }
+
+  var range = juzRanges[juz];
+  var randomGlobalAyah = getRandomArbitrary(range[1], range[2] + 1);
+
+  var total = 0;
+  for (var s = 1; s <= 114; s++) {
+    var ayatCount = surahDB[s].jumlahayat;
+    if (randomGlobalAyah > total && randomGlobalAyah <= total + ayatCount) {
+      nosurat = s;
+      noayat = randomGlobalAyah - total;
+      break;
+    }
+    total += ayatCount;
+  }
+
+  var namasurat = surahDB[nosurat].nama;
+  var url = "db/" + nosurat + "-" + noayat + ".json";
+
+  getJSON(url, function(err, data) {
+    if (err !== null) {
+      alert("Something went wrong: " + err);
+    } else {
+      document.getElementById("arabic").innerHTML = data.arab;
+      document.getElementById("ayat-detail").innerHTML =
+        namasurat + " (" + nosurat + ":" + noayat + ")";
+      document.getElementById("trans").innerHTML = data.trans;
+    }
+  });
+
+});
+
+
+
+function update() {
+  getJSON(url,
+function(err, data) {
+  if (err !== null) {
+    alert('Something went wrong: ' + err);
+  } else {
+    //alert('Your query count: ' + data.query.count);
+    console.log(data)
+    var arabic = document.getElementById("arabic")
+    var place_detilayat = document.getElementById("ayat-detail")
+    var place_trans = document.getElementById("trans")
+
+    arabic.innerHTML = data.arab
+    var namasurat = surahDB[nosurat].nama
+    var trans = data.trans
+    place_detilayat.innerHTML = namasurat + " (" + nosurat +":" + noayat +")"
+    place_trans.innerHTML = trans
+    document.documentElement.scrollTop = 0;
+
+    console.log(data) 
+  }
+});
+}
+
+
+var url
+function nextAyat(){
+  
+  noayat = noayat + 1
+  if ( noayat  > surahDB[nosurat].jumlahayat) {
+    nosurat = nosurat + 1
+    noayat = 1
+  }
+  url = "db/"+nosurat+"-"+noayat+".json"
+  //url = "https://api.quran.sutanlab.id/surah/"+nosurat+"/"+noayat
+  update()
+}
+
+function prevAyat(){
+    noayat = noayat - 1
+  if ( noayat  == 0) {
+    nosurat = nosurat - 1
+    noayat = surahDB[nosurat].jumlahayat
+  }
+  url = "db/"+nosurat+"-"+noayat+".json"
+  //url = "https://api.quran.sutanlab.id/surah/"+nosurat+"/"+noayat
+  update()
+}
+
+
+
+
+document.onkeydown =function(e){
+  console.log(e.keyCode)
+  if (e.keyCode == 39){
+    nextAyat()
+  }
+  else if (e.keyCode == 37){
+    prevAyat()
+  }
+}
+
+function jump(){
+	var a_jump = prompt("Jump");
+	a_jump = a_jump.split(" ")
+	jsur = a_jump[0]
+	jaya = a_jump[1]
+
+
+	if ((jaya <= surahDB[jsur].jumlahayat)&&(jsur <=  114)) {
+		nosurat = parseInt(jsur)
+		noayat = parseInt(jaya)
+		url = "db/"+nosurat+"-"+noayat+".json"
+    //url = "https://api.quran.sutanlab.id/surah/"+nosurat+"/"+noayat
+		update()
+
+	}
+}
+
+
+</script>
+</html>
